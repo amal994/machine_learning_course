@@ -12596,7 +12596,10 @@ It is a ratio of true positives(words classified as spam, and which are actually
 </ul>
 </li>
 <li>What makes it a good candidate:<ul>
-<li>We have around 36K labeled samples, and some of the data is textual data which makes it a good candidate.</li>
+<li>The algorithm is fast and simple.<ul>
+<li>Some of our most important features are continous and Gussian Naive Bayes is good with continous data.</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -12616,7 +12619,9 @@ It is a ratio of true positives(words classified as spam, and which are actually
 </ul>
 </li>
 <li>What makes it a good candidate: <ul>
-<li>We have around 36K labeled samples, and we turned all textual data to numbers which makes KNeighbors a good candidate for this data.</li>
+<li>KNN is accurate in its predictions.</li>
+<li>The output of can be changing k which can improve prediction.</li>
+<li>The output of the algorithm is easy to interpret.</li>
 </ul>
 </li>
 </ul>
@@ -12639,7 +12644,9 @@ It is a ratio of true positives(words classified as spam, and which are actually
 </ul>
 </li>
 <li>What makes it a good candidate: <ul>
-<li>We have around 36K labeled samples, and we turned all textual data to numbers which makes SVC a good candidate for this data if KNeighbors doesn't provide the best classification.</li>
+<li>Good when the data is less than 100K and We have around 36K labeled samples. </li>
+<li>Good with numeric Data. </li>
+<li>Accurate predictions. </li>
 </ul>
 </li>
 </ul>
