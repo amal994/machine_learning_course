@@ -44,8 +44,11 @@ class LearningAgent(Agent):
             self.epsilon = 0.0
             self.alpha = 0.0
         else:
-            self.trials += 1
-            self.epsilon = math.cos(self.alpha * self.trials)
+            self.epsilon = math.exp(-self.alpha*self.trials)
+            self.trials = self.trials + 1
+            #self.epsilon = 1 - (1 / (1 + math.exp(- self.alpha * self.trials)))
+            #self.epsilon = math.cos(self.alpha * self.trials)
+            #self.epsilon = self.epsilon - 0.05
 
         return None
 
@@ -69,7 +72,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, inputs['light'], inputs['left'], inputs['right'], inputs['oncoming'])
+        state = (waypoint, inputs['light'], inputs['left'], inputs['oncoming'])
         #state = None
         return state
 
@@ -81,10 +84,7 @@ class LearningAgent(Agent):
         ########### 
         ## TODO ##
         ###########
-        maxQ = -1000.0
-        for action in self.Q[state]:
-            if maxQ < self.Q[state][action]:
-                maxQ = self.Q[state][action]
+        maxQ = max(self.Q[state].values())
         return maxQ
 
 
@@ -125,15 +125,10 @@ class LearningAgent(Agent):
                     action = random.choice(self.valid_actions)
         # Otherwise, choose an action with the highest Q-value for the current state
                 else:
-                    valid_actions = []
-                    maxQ = self.get_maxQ(state)
-                    for act in self.Q[state]:
-                        if maxQ == self.Q[state][act]:
-                            valid_actions.append(act)
-                    action = random.choice(valid_actions)
+                    best_actions = [action for action in self.valid_actions if
+                                    self.Q[state][action] == self.get_maxQ(state)]
+                    action = random.choice(best_actions)
         # Be sure that when choosing an action with highest Q-value that you randomly select between actions that "tie".
-
-        #action = random.choice(Environment.valid_actions)
 
         return action
 
@@ -186,7 +181,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning=True, epsilon=1.0, alpha=0.01)
+    agent = env.create_agent(LearningAgent, learning=True, alpha=0.002, epsilon=1)
 
     ##############
     # Follow the driving agent
@@ -196,19 +191,20 @@ def run():
 
     ##############
     # Create the simulation
+
     # Flags:
     #   update_delay - continuous time (in seconds) between actions, default is 2.0 seconds
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.01, log_metrics=True, optimized=True)
+    sim = Simulator(env, update_delay=0.01, log_metrics=True, display=False, optimized=True)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=100, tolerance=0.001)
+    sim.run(n_test=100, tolerance=0.01)
 
 
 if __name__ == '__main__':
